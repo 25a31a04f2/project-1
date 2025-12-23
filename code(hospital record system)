@@ -1,0 +1,141 @@
+code:
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Patient {
+    int id;
+    char name[50];
+    int age;
+    char disease[50];
+};
+
+void addPatient() {
+    struct Patient p;
+    FILE *fp;
+
+    fp = fopen("patients.dat", "ab");
+    if (fp == NULL) {
+        printf("File not found!\n");
+        return;
+    }
+
+    printf("\nEnter Patient ID: ");
+    scanf("%d", &p.id);
+
+    printf("Enter Patient Name: ");
+    scanf(" %[^\n]", p.name);
+
+    printf("Enter Age: ");
+    scanf("%d", &p.age);
+
+    printf("Enter Disease: ");
+    scanf(" %[^\n]", p.disease);
+
+    fwrite(&p, sizeof(p), 1, fp);
+    fclose(fp);
+
+    printf("\nPatient record added successfully!\n");
+}
+
+void viewPatients() {
+    struct Patient p;
+    FILE *fp;
+
+    fp = fopen("patients.dat", "rb");
+    if (fp == NULL) {
+        printf("\nNo records found!\n");
+        return;
+    }
+
+    printf("\n--- Patient Records ---\n");
+    while (fread(&p, sizeof(p), 1, fp)) {
+        printf("\nID: %d", p.id);
+        printf("\nName: %s", p.name);
+        printf("\nAge: %d", p.age);
+        printf("\nDisease: %s\n", p.disease);
+        printf("------------------------");
+    }
+
+    fclose(fp);
+}
+
+void searchPatient() {
+    struct Patient p;
+    FILE *fp;
+    int id, found = 0;
+
+    fp = fopen("patients.dat", "rb");
+    if (fp == NULL) {
+        printf("\nNo records found!\n");
+        return;
+    }
+
+    printf("\nEnter Patient ID to search: ");
+    scanf("%d", &id);
+
+    while (fread(&p, sizeof(p), 1, fp)) {
+        if (p.id == id) {
+            printf("\nPatient Found!");
+            printf("\nName: %s", p.name);
+            printf("\nAge: %d", p.age);
+            printf("\nDisease: %s\n", p.disease);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        printf("\nPatient not found!\n");
+
+    fclose(fp);
+}
+
+int main() {
+    int choice;
+
+    do {
+        printf("\n=== Hospital Patient Record System ===");
+        printf("\n1. Add Patient");
+        printf("\n2. View All Patients");
+        printf("\n3. Search Patient");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: addPatient(); break;
+            case 2: viewPatients(); break;
+            case 3: searchPatient(); break;
+            case 4: printf("\nExiting...\n"); break;
+            default: printf("\nInvalid choice!\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+result:
+Enter details of patient 1
+Patient ID: 101
+Patient Name: John
+Age: 30
+Disease: fever
+
+Enter details of patient 2
+Patient ID: 102
+Patient Name: George
+Age: 43
+Disease: fever
+
+--- Patient Records ---
+
+Patient 1
+ID: 101
+Name: John
+Age: 30
+Disease: fever
+
+Patient 2
+ID: 102
+Name: George
+Age: 43
+Disease:fever
